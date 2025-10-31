@@ -12,6 +12,7 @@ class Value:
         out = Value(self.data + other.data, (self, other), '+')
 
         def _backward():
+            # c = a + b --> dc/da = 1 , dc/db = 1
             self.grad += out.grad
             other.grad += out.grad
         out._backward = _backward
@@ -19,10 +20,12 @@ class Value:
         return out
     
     def __mul__(self, other):
+        # c = ab --> dc/da = b , dc/db = a
         other = other if isinstance(other, Value) else Value(other)
         out = Value(self.data * other.data, (self, other), '*')
 
         def _backward():
+            # downstream_gradient = upstream_gradient * local_gradient
             self.grad += other.data * out.grad
             other.grad += self.data * out.grad
         out._backward = _backward 

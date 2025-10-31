@@ -17,6 +17,7 @@ class Neuron(Module):
         self.nonlin = nonlin
 
     def __call__(self, x):
+        # Forward pass
         z = sum((wi * xi for wi, xi in zip(self.w, x)), self.b)
         a = z.relu()
         return a if self.nonlin else z

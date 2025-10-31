@@ -1,10 +1,12 @@
 import torch
 import sys
 import os
+from time import monotonic
 
 # Add the parent directory to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-from Mymicrograd.micrograd.engine import Value
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+from micrograd.engine import Value
 
 def test_sanity_check():
 
@@ -13,7 +15,10 @@ def test_sanity_check():
     q = z.relu() + z * x
     h = (z * z).relu()
     y = h + q + q * x
+    t_s = monotonic()
     y.backward()
+    t_e = monotonic()
+    print(f"Time taken by backward function (Micrograd): {t_e - t_s:.5f}")
     xmg, ymg = x, y
 
     x = torch.Tensor([-4.0]).double()
@@ -22,13 +27,24 @@ def test_sanity_check():
     q = z.relu() + z * x
     h = (z * z).relu()
     y = h + q + q * x
+    t_s = monotonic()
     y.backward()
+    t_e = monotonic()
+    print(f"Time taken by backward function (Pytorch): {t_e - t_s:.5f}")
     xpt, ypt = x, y
 
     # forward pass went well
     assert ymg.data == ypt.data.item()
+    if ymg.data == ypt.data.item():
+        print("Y grad test passed successfully!")
+    else:
+        print("Something went wrong, the values are different")
     # backward pass went well
     assert xmg.grad == xpt.grad.item()
+    if xmg.grad == xpt.grad.item():
+        print("X grad test passed successfully!")
+    else:
+        print("Something went wrong, the values are different")
 
 
 
@@ -72,3 +88,6 @@ def test_more_ops():
     # backward pass went well
     assert abs(amg.grad - apt.grad.item()) < tol
     assert abs(bmg.grad - bpt.grad.item()) < tol
+
+if __name__ == "__main__":
+    test_sanity_check()
