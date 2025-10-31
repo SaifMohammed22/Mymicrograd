@@ -1,1 +1,1 @@
-This is an implementation of micrograd following [Andrej Karpathy's video](https://youtu.be/VMj-3S1tku0?si=jAfH6Z2FB-n_4135).
+This is an implementation of micrograd following [Andrej Karpathy's video](https://youtu.be/VMj-3S1tku0?si=jAfH6Z2FB-n_4135). I extended the code to compare the speed of forward-mode differentiation and inverse-mode differentiation (backpropagation).
